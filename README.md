@@ -22,7 +22,10 @@ the last known good state.
 
 ## Running
 
-Execute `go run github.com/Sean-Der/webrtc-zero-downtime-restart@latest`. This will start the server and print
+Execute `go run github.com/Sean-Der/webrtc-zero-downtime-restart@latest`.
+
+
+This will start the server. On startup the server will print.
 
 ```
 Open http://localhost:8080 to access this demo
@@ -38,4 +41,4 @@ be able to continue talking when the process is started again.
 
 This demo uses reflection to access internal Pion WebRTC APIs. We will be working on designing the final
 APIs for the next major release of Pion WebRTC. We would love your feedback ideas either on the
-[tracking issue]() or [Slack](https://pion.ly/slack)
+repo or [Slack](https://pion.ly/slack)
