@@ -6,7 +6,7 @@ require (
 	github.com/pion/dtls/v2 v2.2.6
 	github.com/pion/ice/v2 v2.3.1
 	github.com/pion/rtcp v1.2.10
-	github.com/pion/webrtc/v3 v3.1.59-0.20230317181827-3638bce3b6f0
+	github.com/pion/webrtc/v3 v3.1.59-0.20230326035336-9a0eb473514a
 )
 
 require (
@@ -19,7 +19,7 @@ require (
 	github.com/pion/rtp v1.7.13 // indirect
 	github.com/pion/sctp v1.8.6 // indirect
 	github.com/pion/sdp/v3 v3.0.6 // indirect
-	github.com/pion/srtp/v2 v2.0.12 // indirect
+	github.com/pion/srtp/v2 v2.0.13-0.20230326035121-5f7175086aae // indirect
 	github.com/pion/stun v0.4.0 // indirect
 	github.com/pion/transport/v2 v2.0.2 // indirect
 	github.com/pion/turn/v2 v2.1.0 // indirect

@@ -103,6 +103,7 @@ type PeerConnectionState struct {
 	DTLSConnectionState dtls.State
 
 	SSRCAudio, SSRCVideo webrtc.SSRC
+	SRTPState            map[uint32]uint32
 }
 
 var (
@@ -140,17 +141,25 @@ func main() {
 		json.NewEncoder(w).Encode(&out)
 	})
 
+	go func() {
+		for range time.NewTicker(2 * time.Second).C {
+			serialize()
+		}
+	}()
+
 	fmt.Println("Open http://localhost:8080 to access this demo")
 	panic(http.ListenAndServe(":8080", nil))
 }
 
 func doSignaling(w http.ResponseWriter, r *http.Request) {
+	s := webrtc.SettingEngine{}
+	s.SetSRTPProtectionProfiles(dtls.SRTP_AEAD_AES_128_GCM)
 	m := &webrtc.MediaEngine{}
 	if err := m.RegisterDefaultCodecs(); err != nil {
 		panic(err)
 	}
 
-	peerConnection, err := webrtc.NewAPI(webrtc.WithMediaEngine(m)).NewPeerConnection(webrtc.Configuration{})
+	peerConnection, err := webrtc.NewAPI(webrtc.WithMediaEngine(m), webrtc.WithSettingEngine(s)).NewPeerConnection(webrtc.Configuration{})
 	if err != nil {
 		panic(err)
 	}
@@ -246,10 +255,10 @@ func serialize() {
 			DTLSConnectionState: dtlsConn.ConnectionState(),
 			SSRCAudio:           SSRCAudio,
 			SSRCVideo:           SSRCVideo,
+			SRTPState:           dtlsTransport.GetSRTPState(),
 		})
 	}
 
-	fmt.Printf("Saving %d sessions to '%s'\n", len(state.PeerConnectionState), serializedPeerConnectionsFile)
 	var toSave bytes.Buffer
 	enc := gob.NewEncoder(&toSave)
 	if err := enc.Encode(state); err != nil {
@@ -273,11 +282,13 @@ func deserialize(state GlobalState) {
 		}
 
 		s := webrtc.SettingEngine{}
+		s.SetSRTPProtectionProfiles(dtls.SRTP_AEAD_AES_128_GCM)
 		s.SetICECredentials(state.PeerConnectionState[i].ICEUsernameFragment, state.PeerConnectionState[i].ICEPassword)
 		if err := s.SetEphemeralUDPPortRange(state.PeerConnectionState[i].ICEPort, state.PeerConnectionState[i].ICEPort); err != nil {
 			panic(err)
 		}
 		s.SetDTLSConnectionState(&state.PeerConnectionState[i].DTLSConnectionState)
+		s.SetSRTPState(state.PeerConnectionState[i].SRTPState)
 
 		peerConnection, err := webrtc.NewAPI(webrtc.WithSettingEngine(s), webrtc.WithMediaEngine(m)).NewPeerConnection(webrtc.Configuration{})
 		if err != nil {
