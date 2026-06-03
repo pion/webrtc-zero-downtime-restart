@@ -1,5 +1,22 @@
 # webrtc-zero-downtime-restart
 
+> [!WARNING]
+> The APIs this example uses were never merged into Pion. If you are interested in these APIs please reach out!
+
+This API has a few downsides
+
+* Complexity of implementing it
+Saving+Resumption of state requires additional code. You have to update all your business state as well, this made
+it hard to deploy.
+
+* Privacy+Security
+Saving crypto state meant that previous packets could be replayed+decrypted. Keeping this only in memory is safer for users.
+
+* Handling across versions
+Having to support resumption across multiple Pion versions might be error prone.
+
+------
+
 webrtc-zero-downtime-restart is a simple Pion WebRTC broadcast server that can be restarted
 without disconnecting users. All the WebRTC state is suspended to disk. The
 next time the process is started that information is read into memory. All
@@ -22,7 +39,7 @@ the last known good state.
 
 ## Running
 
-Execute `go run github.com/Sean-Der/webrtc-zero-downtime-restart@latest`.
+Execute `go run github.com/pion/webrtc-zero-downtime-restart@latest`.
 
 
 This will start the server. On startup the server will print.
